@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-class-prefer-methods",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Eslint plugin to ensure usage of class methods instead of arrow-function properties whenever possible",
   "main": "lib",
   "files": [
