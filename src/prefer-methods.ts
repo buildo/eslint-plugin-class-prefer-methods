@@ -18,7 +18,7 @@ type ClassInfo = {
 };
 
 function isES6Component(node: ASTNode): boolean {
-  return (/PureComponent|Component/).test(node.superClass.name || (node.superClass.property && node.superClass.property.name) || '');
+  return !!node.superClass && (/PureComponent|Component/).test(node.superClass.name || (node.superClass.property && node.superClass.property.name) || '');
 }
 
 function find(array: any[], iterator: (a: any) => boolean) {
