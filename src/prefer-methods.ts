@@ -161,7 +161,10 @@ module.exports = function (context: any) {
           }
 
           if (classInfo && classInfo.arrowFunctionsMethodsNames.indexOf(p.key.name)) {
-            arrowFunctionAliases.push(p.value.name);
+            arrowFunctionAliases.push({
+              aliasOf: p.key.name,
+              name: p.value.name
+            });
           }
         });
       }
