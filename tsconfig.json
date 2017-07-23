@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "outDir": "lib",
+    "module": "commonjs",
+    "target": "ESNext",
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "sourceMap": false,
+    "alwaysStrict": true,
+    "allowJs": false,
+    "jsx": "react",
+    "removeComments": false,
+    "lib": [
+      "es6", "dom"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

@@ -1,0 +1,6 @@
+node_modules
+*.log
+lib
+**/.tags
+**/.tags1
+.eslintcache

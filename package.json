@@ -1,0 +1,38 @@
+{
+  "name": "eslint-plugin-class-prefer-methods",
+  "version": "1.0.0",
+  "description": "Eslint plugin to ensure usage of class methods instead of arrow-function properties whenever possible",
+  "main": "lib",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "watch": "npm run build -- --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:buildo/eslint-plugin-class-prefer-methods"
+  },
+  "keywords": [
+    "eslint",
+    "react",
+    "class",
+    "callback",
+    "arrow function",
+    "bind",
+    "jsx"
+  ],
+  "author": "Francesco Cioria <francesco@buildo.io>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/buildo/eslint-plugin-class-prefer-methods/issues"
+  },
+  "homepage": "https://github.com/buildo/eslint-plugin-class-prefer-methods/issues",
+  "devDependencies": {
+    "@types/node": "^8.0.15",
+    "smooth-release": "^8.0.4",
+    "typescript": "^2.4.2"
+  }
+}
