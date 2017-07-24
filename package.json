@@ -11,7 +11,7 @@
     "watch": "npm run build -- --watch",
     "prepublish": "npm run build",
     "release-version": "smooth-release",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npm run build && jest"
   },
   "repository": {
     "type": "git",
@@ -34,6 +34,8 @@
   "homepage": "https://github.com/buildo/eslint-plugin-class-prefer-methods/issues",
   "devDependencies": {
     "@types/node": "^8.0.15",
+    "eslint": "^4.3.0",
+    "jest": "^20.0.4",
     "smooth-release": "^8.0.4",
     "typescript": "^2.4.2"
   }

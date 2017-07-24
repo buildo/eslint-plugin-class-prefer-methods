@@ -3,6 +3,18 @@ type ASTNode = {
   [k: string]: any
 };
 
+type Fixer = {
+  replaceText: (node: ASTNode, text: string) => void
+};
+
+type Context = {
+  report: (o: { node: ASTNode, message: string, data: { description: string }, fix: (f: Fixer) => void }) => void
+  getSourceCode: () => {
+    getText: (node: ASTNode) => string,
+    getLines: () => string[]
+  }
+};
+
 type ClassInfo = {
   // Set of JSX nodes where callbacks were passed as prop.
   methodsPassedToChildren: Set<any>,
@@ -16,6 +28,8 @@ type ClassInfo = {
   arrowFunctionsMethods: ASTNode[],
   arrowFunctionsMethodsNames: string[]
 };
+
+const DESCRIPTION = 'usage of class methods instead of arrow-function properties whenever possible';
 
 function isES6Component(node: ASTNode): boolean {
   return !!node.superClass && (/PureComponent|Component/).test(node.superClass.name || (node.superClass.property && node.superClass.property.name) || '');
@@ -59,6 +73,43 @@ function getInitialClassInfo(node: ASTNode): ClassInfo {
   return classInfo;
 }
 
+function getTextFromRange(lines: string[], locStart: { line: number, column: number }, locEnd: { line: number, column: number }): string {
+  const _lines = lines.slice(locStart.line - 1, locEnd.line);
+  const params = _lines.map((s, i) => {
+    if (i === 0) {
+      return s.slice(locStart.column - 1, locStart.line === locEnd.line ? locEnd.column + 1 : undefined);
+    }
+    if (i === _lines.length - 1) {
+      return s.slice(0, locEnd.column + 1);      
+    }
+    return s;
+  }).join('\n');
+
+  return params.charAt(0) === '(' ? params : `(${params.trim()})`;
+}
+
+function arrowFunctionToMethod(node: ASTNode, context: Context): string {
+  const { params, body } = node.value;
+  const sourceCode = context.getSourceCode();
+  const paramsText = params.length ?
+    getTextFromRange(sourceCode.getLines(), params[0].loc.start, params[params.length - 1].loc.end) :
+    '()';
+  const bodyText = body.type === 'BlockStatement' ? sourceCode.getText(body) : `{ return ${sourceCode.getText(body)}; }`;
+
+  return `${node.key.name}${paramsText} ${bodyText}`;
+}
+
+function methodToArrowFunction(node: ASTNode, context: Context): string {
+  const { params, body } = node.value;
+  const sourceCode = context.getSourceCode();
+  const paramsText = params.length ?
+    getTextFromRange(sourceCode.getLines(), params[0].loc.start, params[params.length - 1].loc.end) :
+    '()';
+  const bodyText = body.type === 'BlockStatement' ? sourceCode.getText(body) : null;
+
+  return `${node.key.name} = ${paramsText} => ${bodyText}`;
+}
+
 let classInfo: ClassInfo | null = null;
 let methodNode: ASTNode | null = null;
 let methodAliases: {
@@ -70,7 +121,7 @@ let arrowFunctionAliases: {
   name: string
 }[] = [];
 
-module.exports = function (context: any) {
+module.exports = function (context: Context) {
 
   function reportArrowFunctionsThatCouldBeMethods() {
     if (!classInfo) {
@@ -83,7 +134,14 @@ module.exports = function (context: any) {
       }
 
       if (!classInfo.arrowFunctionsMethodsPassedToChildren.has(node)) {
-        context.report(node, 'should use method for non-callbacks', { identifier: node.name });
+        context.report({
+          node,
+          message: 'should use method for non-callbacks',
+          data: { description: DESCRIPTION },
+          fix(fixer) {
+            return fixer.replaceText(node, arrowFunctionToMethod(node, context));
+          }
+        });
       }
     });
   }
@@ -94,7 +152,14 @@ module.exports = function (context: any) {
     }
 
     classInfo.methodsPassedToChildren.forEach(node => {
-      context.report(node, 'should use arrow-functions for callbacks', { identifier: node.name });
+      context.report({
+        node,
+        message: 'should use arrow-functions for callbacks',
+        data: { description: DESCRIPTION },
+        fix(fixer) {
+          return fixer.replaceText(node, methodToArrowFunction(node, context));
+        }
+      });
     });
   }
 
