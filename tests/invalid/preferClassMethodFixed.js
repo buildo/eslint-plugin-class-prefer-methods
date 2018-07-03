@@ -4,7 +4,7 @@ class Example extends React.Component {
     return null;
   }
 
-  doThat = (a, b, c) => null
+  doThat(a, b, c) { return null; }
 
   render() {
     const { doThis, _doThat: doThat } = this;
