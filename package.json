@@ -34,6 +34,7 @@
   "homepage": "https://github.com/buildo/eslint-plugin-class-prefer-methods/issues",
   "devDependencies": {
     "@types/node": "^8.0.15",
+    "babel-eslint": "^8.2.5",
     "eslint": "^4.3.0",
     "jest": "^20.0.4",
     "smooth-release": "^8.0.4",
